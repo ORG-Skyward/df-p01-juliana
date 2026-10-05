@@ -1,35 +1,31 @@
 import os
 
-def sumar(a, b):
-    return a + b
-
 if __name__ == "__main__":
-    num1 = 8
-    num2 = 7
-    resultado = sumar(num1, num2)
-    
     # Crear la carpeta public si no existe
     os.makedirs("public", exist_ok=True)
     
-    # Generar el archivo index.html dentro de public/
-    html_content = f"""<!DOCTYPE html>
+    # Generar el archivo index.html interactivo
+    html_content = """<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Suma</title>
+    <title>Calculadora Interactiva</title>
     <style>
-        body {{
+        * {
+            box-sizing: border-box;
+        }
+        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             color: #333;
-        }}
-        .card {{
+        }
+        .card {
             background: white;
             padding: 2.5rem;
             border-radius: 15px;
@@ -37,34 +33,102 @@ if __name__ == "__main__":
             text-align: center;
             max-width: 400px;
             width: 90%;
-        }}
-        h1 {{
+        }
+        h1 {
             color: #4a5568;
             margin-bottom: 1.5rem;
             font-size: 1.8rem;
-        }}
-        .operation {{
-            font-size: 1.2rem;
-            color: #718096;
-            margin-bottom: 1rem;
-        }}
-        .result {{
-            font-size: 3rem;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 0.8rem;
+            font-size: 1.1rem;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            outline: none;
+            text-align: center;
+            transition: border-color 0.2s;
+        }
+        input[type="number"]:focus {
+            border-color: #667eea;
+        }
+        button {
+            width: 100%;
+            padding: 0.9rem;
+            font-size: 1.1rem;
             font-weight: bold;
-            color: #5a67d8;
+            color: white;
+            background-color: #5a67d8;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        button:hover {
+            background-color: #4c51bf;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        .result-container {
+            margin-top: 1.5rem;
+        }
+        .result-label {
+            font-size: 1rem;
+            color: #718096;
+            margin-bottom: 0.5rem;
+        }
+        .result {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2b6cb0;
             background: #ebf8ff;
             padding: 1rem;
             border-radius: 10px;
             border: 2px dashed #90cdf4;
-        }}
+            min-height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
     <div class="card">
-        <h1>Resultado de la Suma</h1>
-        <div class="operation">{num1} + {num2}</div>
-        <div class="result">{resultado}</div>
+        <h1>Calculadora de Suma</h1>
+        
+        <div class="input-group">
+            <input type="number" id="num1" placeholder="Ingresa el primer número" value="0">
+            <input type="number" id="num2" placeholder="Ingresa el segundo número" value="0">
+        </div>
+
+        <button onclick="realizarSuma()">Calcular Suma</button>
+
+        <div class="result-container">
+            <div class="result-label">Resultado:</div>
+            <div class="result" id="resultado">0</div>
+        </div>
     </div>
+
+    <script>
+        function realizarSuma() {
+            const val1 = parseFloat(document.getElementById('num1').value) || 0;
+            const val2 = parseFloat(document.getElementById('num2').value) || 0;
+            const suma = val1 + val2;
+            
+            document.getElementById('resultado').textContent = suma;
+        }
+
+        // Calcular automáticamente al cambiar los valores
+        document.getElementById('num1').addEventListener('input', realizarSuma);
+        document.getElementById('num2').addEventListener('input', realizarSuma);
+    </script>
 </body>
 </html>
 """
@@ -72,5 +136,5 @@ if __name__ == "__main__":
     with open("public/index.html", "w", encoding="utf-8") as f:
         f.write(html_content)
         
-    print("¡Página web generada con éxito en public/index.html!")
+    print("¡Página web interactiva generada con éxito en public/index.html!")
     
