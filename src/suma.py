@@ -4,13 +4,13 @@ if __name__ == "__main__":
     # Crear la carpeta public si no existe
     os.makedirs("public", exist_ok=True)
     
-    # Generar el archivo index.html interactivo
+    # Generar el archivo index.html con inputs e interactividad
     html_content = """<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora Interactiva</title>
+    <title>Calculadora Interactiva de Suma</title>
     <style>
         * {
             box-sizing: border-box;
@@ -31,7 +31,7 @@ if __name__ == "__main__":
             border-radius: 15px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             text-align: center;
-            max-width: 400px;
+            max-width: 420px;
             width: 90%;
         }
         h1 {
@@ -58,20 +58,33 @@ if __name__ == "__main__":
         input[type="number"]:focus {
             border-color: #667eea;
         }
+        .button-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
         button {
-            width: 100%;
+            flex: 1;
             padding: 0.9rem;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
             color: white;
-            background-color: #5a67d8;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.2s, transform 0.1s;
         }
-        button:hover {
+        .btn-calc {
+            background-color: #5a67d8;
+        }
+        .btn-calc:hover {
             background-color: #4c51bf;
+        }
+        .btn-rand {
+            background-color: #38a169;
+        }
+        .btn-rand:hover {
+            background-color: #2f855a;
         }
         button:active {
             transform: scale(0.98);
@@ -108,7 +121,10 @@ if __name__ == "__main__":
             <input type="number" id="num2" placeholder="Ingresa el segundo número" value="0">
         </div>
 
-        <button onclick="realizarSuma()">Calcular Suma</button>
+        <div class="button-group">
+            <button class="btn-calc" onclick="realizarSuma()">Calcular Suma</button>
+            <button class="btn-rand" onclick="generarAleatorios()">Números Aleatorios</button>
+        </div>
 
         <div class="result-container">
             <div class="result-label">Resultado:</div>
@@ -125,7 +141,18 @@ if __name__ == "__main__":
             document.getElementById('resultado').textContent = suma;
         }
 
-        // Calcular automáticamente al cambiar los valores
+        function generarAleatorios() {
+            // Genera dos números aleatorios entre 1 y 100
+            const random1 = Math.floor(Math.random() * 100) + 1;
+            const random2 = Math.floor(Math.random() * 100) + 1;
+
+            document.getElementById('num1').value = random1;
+            document.getElementById('num2').value = random2;
+
+            realizarSuma();
+        }
+
+        // Calcula automáticamente la suma conforme escribes los números
         document.getElementById('num1').addEventListener('input', realizarSuma);
         document.getElementById('num2').addEventListener('input', realizarSuma);
     </script>
@@ -136,5 +163,5 @@ if __name__ == "__main__":
     with open("public/index.html", "w", encoding="utf-8") as f:
         f.write(html_content)
         
-    print("¡Página web interactiva generada con éxito en public/index.html!")
+    print("¡Página web interactiva y con números aleatorios generada con éxito!")
     
