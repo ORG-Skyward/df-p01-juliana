@@ -1,10 +1,9 @@
-name: Desplegar Pagina de Suma
+name: Despliegue de Calculadora y Django
 
 on:
   push:
     branches: [ "main", "feature/juliana" ]
 
-# Permisos requeridos para desplegar en GitHub Pages
 permissions:
   contents: read
   pages: write
@@ -15,14 +14,14 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
+  construir_y_desplegar:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
 
     steps:
-    - name: Obtener codigo del repositorio
+    - name: Obtener código del repositorio
       uses: actions/checkout@v4
 
     - name: Configurar Python
@@ -30,13 +29,23 @@ jobs:
       with:
         python-version: '3.10'
 
-    - name: Generar la pagina HTML con Python
+    - name: Instalar Django
+      run: |
+        python -m pip install --upgrade pip
+        pip install django
+
+    - name: Generar Calculadora Principal
       run: python src/suma.py
+
+    - name: Generar Módulo Django
+      run: |
+        cd src
+        python -c "import os, django; os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mi_proyecto.settings'); django.setup(); import generar_django"
 
     - name: Configurar GitHub Pages
       uses: actions/configure-pages@v4
 
-    - name: Cargar artefactos web
+    - name: Cargar Artefactos Web
       uses: actions/upload-pages-artifact@v3
       with:
         path: 'public'
@@ -44,5 +53,3 @@ jobs:
     - name: Desplegar en GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4
-
-      
