@@ -1,0 +1,24 @@
+name: Calculadora de Suma
+
+on:
+  push:
+    branches: [ "main", "feature/juliana" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  realizar_suma:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Obtener codigo del repositorio
+      uses: actions/checkout@v4
+
+    - name: Configurar Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Ejecutar la suma en Python
+      run: python src/suma.py
+       
