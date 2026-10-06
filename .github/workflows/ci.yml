@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # CAJÓN 1: Compila la calculadora principal y el módulo Django, luego despliega
+  # CAJÓN 1: Compila y genera tanto la Calculadora como el HTML de Django
   desplegar-calculadora:
     environment:
       name: github-pages-calculadora
@@ -30,18 +30,18 @@ jobs:
       with:
         python-version: '3.10'
 
-    - name: Instalar Django
+    - name: Instalar Dependencias
       run: |
         python -m pip install --upgrade pip
-        pip install django
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install django; fi
 
     - name: Generar Calculadora Principal
       run: python src/suma.py
 
-    - name: Generar HTML de Django en public/django
+    - name: Generar Módulo Django en public/django/index.html
       run: |
-        cd src
-        python -c "import os, django; os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mi_proyecto.settings'); django.setup(); import generar_django"
+        export PYTHONPATH=$PYTHONPATH:.
+        python src/generar_django.py
 
     - name: Configurar GitHub Pages
       uses: actions/configure-pages@v4
@@ -55,8 +55,7 @@ jobs:
       id: deployment
       uses: actions/deploy-pages@v4
 
-
-  # CAJÓN 2: Enlace directo al módulo Django ya desplegado
+  # CAJÓN 2: Enlace directo a la ruta desplegada
   desplegar-django:
     needs: desplegar-calculadora
     environment:
@@ -65,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Notificar disponibilidad de Django
+    - name: Confirmar despliegue de Django
       run: |
-        echo "Modulo Django correctamente enlazado en https://org-skyward.github.io/df-p01-juliana/django/"
-        
+        echo "Módulo Django generado e integrado en GitHub Pages."
+         
