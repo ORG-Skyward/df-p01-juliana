@@ -1,65 +1,14 @@
-name: Despliegue de Calculadora y Django
-
-on:
-  push:
-    branches: [ "main", "feature/juliana" ]
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
-jobs:
-  # CAJÓN 1: Genera y despliega la Calculadora en GitHub Pages
-  desplegar-calculadora:
-    environment:
-      name: github-pages-calculadora
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Obtener código del repositorio
-      uses: actions/checkout@v4
-
-    - name: Configurar Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
-
-    - name: Generar Calculadora Principal
-      run: python src/suma.py
-
-    - name: Configurar GitHub Pages
-      uses: actions/configure-pages@v4
-
-    - name: Cargar Artefactos Web
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: 'public'
-
-    - name: Desplegar en GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
-
-
-  # CAJÓN 2: Ejecuta la activación de Render y muestra la URL del servicio Django
+# CAJÓN 2: Ejecuta la activación de Render y muestra la URL del servicio Django
   desplegar-django:
     needs: desplegar-calculadora
     environment:
       name: render-django
-      # Reemplaza la URL por la URL de tu aplicación en Render
-      url: https://mi-app-django.onrender.com
+      # Reemplaza esta URL por tu dirección real de Render:
+      url: https://TU-APP-REAL-EN-RENDER.onrender.com
     runs-on: ubuntu-latest
 
     steps:
-    - name: Activar despliegue en Render (Deploy Hook)
-      # Si tienes un Deploy Hook URL de Render, sustitúyelo aquí.
-      # Si solo quieres vincular la URL, este paso notifica el despliegue.
+    - name: Notificar estado de Django
       run: |
-        echo "Iniciando despliegue de Django en Render..."
-        # curl -X POST "https://api.render.com/deploy/srv-xxxxx?key=yyyyy"
+        echo "Redirigiendo a la aplicación Django en Render..."
          
