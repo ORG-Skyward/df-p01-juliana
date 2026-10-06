@@ -14,10 +14,10 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # CAJÓN 1: Mantiene el enlace de la Calculadora Base intacto
+  # CAJÓN 1: Mantiene el enlace de la Calculadora Base
   desplegar-calculadora:
     environment:
-      name: github-pages
+      name: github-pages-calculadora
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
 
@@ -46,17 +46,42 @@ jobs:
       uses: actions/deploy-pages@v4
 
 
-  # CAJÓN 2: Segundo cajón exclusivo para el link del Módulo Django
+  # CAJÓN 2: Genera y despliega su propio link directo de Django
   desplegar-django:
     needs: desplegar-calculadora
     environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}django/
+      name: github-pages-django
+      url: https://org-skyward.github.io/df-p01-juliana/django/
     runs-on: ubuntu-latest
 
     steps:
-    - name: Notificar estado de Django
-      run: |
-        echo "Módulo de Django activo y vinculado al entorno de producción."
+    - name: Obtener código del repositorio
+      uses: actions/checkout@v4
 
-         
+    - name: Configurar Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Instalar Django
+      run: |
+        python -m pip install --upgrade pip
+        pip install django
+
+    - name: Generar Archivos de Django
+      run: |
+        cd src
+        python -c "import os, django; os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mi_proyecto.settings'); django.setup(); import generar_django"
+
+    - name: Configurar GitHub Pages
+      uses: actions/configure-pages@v4
+
+    - name: Cargar Artefactos de Django
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: 'public/django'
+
+    - name: Desplegar en GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4 
+       
