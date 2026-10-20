@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplicación Django con Multimedia y Modelos 3D</title>
+    <!-- Componente web oficial para visores 3D -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f6f9; color: #333; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        nav a { margin-right: 15px; text-decoration: none; color: #2563eb; font-weight: bold; }
+        model-viewer { width: 100%; height: 400px; background-color: #e2e8f0; border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+    <!-- Navegación de Rutas -->
+    <nav class="card">
+        <a href="/">Inicio</a>
+        <a href="/calculadora/">Calculadora</a>
+        <a href="/3d/">Modelo 3D</a>
+        <a href="/multimedia/">Multimedia</a>
+    </nav>
+
+    <!-- Visor de Modelo 3D -->
+    <div class="card">
+        <h2>Visor Interactivo 3D</h2>
+        <model-viewer 
+            src="https://modelviewer.dev/shared-assets/models/Astronaut.glb" 
+            alt="Modelo 3D Interactivo" 
+            auto-rotate 
+            camera-controls 
+            ar>
+        </model-viewer>
+    </div>
+
+    <!-- Sección Multimedia -->
+    <div class="card">
+        <h2>Sección Multimedia</h2>
+        <h3>Audio:</h3>
+        <audio controls style="width: 100%;">
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        </audio>
+
+        <h3>Video / Animación:</h3>
+        <video width="100%" height="320" controls style="border-radius: 8px;">
+            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+        </video>
+    </div>
+
+</body>
+</html>
+ 
