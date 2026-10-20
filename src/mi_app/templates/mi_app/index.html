@@ -19,8 +19,9 @@
         .card { background: #1e293b; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); margin-bottom: 25px; border: 1px solid #334155; }
         h2 { color: #38bdf8; border-bottom: 2px solid #334155; padding-bottom: 8px; margin-top: 0; }
         
-        /* Calculadora */
-        .calc-display { width: 100%; height: 45px; font-size: 1.5rem; text-align: right; padding: 5px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #38bdf8; }
+        /* Calculadora e Insumos */
+        .calc-input { width: 100%; padding: 10px; margin-bottom: 12px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #f8fafc; font-size: 1rem; box-sizing: border-box; }
+        .calc-display { width: 100%; height: 45px; font-size: 1.5rem; text-align: right; padding: 5px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #38bdf8; box-sizing: border-box; }
         .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .calc-buttons button { padding: 15px; font-size: 1.2rem; border-radius: 6px; border: none; background: #334155; color: white; cursor: pointer; }
         .calc-buttons button:hover { background: #475569; }
@@ -48,28 +49,58 @@
 </head>
 <body>
 
-    <!-- 1. Módulo Calculadora -->
+    <!-- 1. Módulo Calculadora con Registro Multi-Base de Datos -->
     <div class="card">
         <h2>Calculadora Interactiva</h2>
-        <input type="text" id="display" class="calc-display" readonly>
-        <div class="calc-buttons">
-            <button onclick="clearCalc()">C</button>
-            <button onclick="appendCalc('/')" class="op">/</button>
-            <button onclick="appendCalc('*')" class="op">*</button>
-            <button onclick="appendCalc('-')" class="op">-</button>
-            <button onclick="appendCalc('7')">7</button>
-            <button onclick="appendCalc('8')">8</button>
-            <button onclick="appendCalc('9')">9</button>
-            <button onclick="appendCalc('+')" class="op">+</button>
-            <button onclick="appendCalc('4')">4</button>
-            <button onclick="appendCalc('5')">5</button>
-            <button onclick="appendCalc('6')">6</button>
-            <button onclick="calculateResult()" class="op">=</button>
-            <button onclick="appendCalc('1')">1</button>
-            <button onclick="appendCalc('2')">2</button>
-            <button onclick="appendCalc('3')">3</button>
-            <button onclick="appendCalc('0')">0</button>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <!-- Nombre de usuario / Registro de auditoría -->
+            <input type="text" name="usuario" placeholder="Nombre de usuario / Registro" value="{{ usuario|default:'' }}" class="calc-input">
+            
+            <!-- Pantalla del visor -->
+            <input type="text" id="display" name="expresion" class="calc-display" value="{% if resultado %}{{ resultado }}{% endif %}" readonly>
+            
+            <!-- Inputs ocultos para envío directo de operandos si usas post tradicional -->
+            <input type="hidden" id="num1" name="num1">
+            <input type="hidden" id="num2" name="num2">
+            <input type="hidden" id="operador" name="operador">
+
+            <div class="calc-buttons">
+                <button type="button" onclick="clearCalc()">C</button>
+                <button type="button" onclick="appendCalc('/')" class="op">/</button>
+                <button type="button" onclick="appendCalc('*')" class="op">*</button>
+                <button type="button" onclick="appendCalc('-')" class="op">-</button>
+                <button type="button" onclick="appendCalc('7')">7</button>
+                <button type="button" onclick="appendCalc('8')">8</button>
+                <button type="button" onclick="appendCalc('9')">9</button>
+                <button type="button" onclick="appendCalc('+')" class="op">+</button>
+                <button type="button" onclick="appendCalc('4')">4</button>
+                <button type="button" onclick="appendCalc('5')">5</button>
+                <button type="button" onclick="appendCalc('6')">6</button>
+                <button type="submit" onclick="prepararEnvio()" class="op">=</button>
+                <button type="button" onclick="appendCalc('1')">1</button>
+                <button type="button" onclick="appendCalc('2')">2</button>
+                <button type="button" onclick="appendCalc('3')">3</button>
+                <button type="button" onclick="appendCalc('0')">0</button>
+            </div>
+        </form>
+
+        <!-- Sección de Historial Guardado en PostgreSQL, MySQL y MongoDB -->
+        {% if historial %}
+        <div style="margin-top: 20px; text-align: left; background: #0f172a; padding: 15px; border-radius: 8px; border: 1px solid #334155;">
+            <h4 style="margin-top: 0; font-size: 14px; color: #38bdf8;">📜 ÚLTIMOS REGISTROS EN BASES DE DATOS:</h4>
+            <ul style="padding-left: 20px; margin-bottom: 0; font-size: 13px; color: #cbd5e1;">
+                {% for reg in historial %}
+                    <li style="margin-bottom: 4px;">
+                        <span style="color: #38bdf8; font-weight: bold;">{{ reg.usuario }}</span>: 
+                        {{ reg.operacion }} = <strong>{{ reg.resultado }}</strong>
+                    </li>
+                {% endfor %}
+            </ul>
         </div>
+        {% endif %}
     </div>
 
     <!-- 2. Imagen Destacada -->
@@ -103,7 +134,7 @@
 
     <!-- 5. Mapa Interactivo con Navegación de Rutas -->
     <div class="card">
-        <h2>Mapa Interactivo y Rutas Navegabless</h2>
+        <h2>Mapa Interactivo y Rutas Navegables</h2>
         <div style="margin-bottom: 12px;">
             <button class="btn-route" onclick="trazarRutaDirecta()">Ruta Corta (Directa)</button>
             <button class="btn-route" style="background:#0d9488;" onclick="trazarRutaLarga()">Ruta Larga (Alternativa)</button>
@@ -127,9 +158,16 @@
         let display = document.getElementById('display');
         function appendCalc(val) { display.value += val; }
         function clearCalc() { display.value = ''; }
-        function calculateResult() {
-            try { display.value = eval(display.value); } 
-            catch { display.value = 'Error'; }
+        
+        function prepararEnvio() {
+            // Desglosa la expresión actual para enviarla al backend de Django
+            let expr = display.value;
+            let match = expr.match(/^(\d+(?:\.\d+)?)\s*([\+\-\*\/])\s*(\d+(?:\.\d+)?)$/);
+            if (match) {
+                document.getElementById('num1').value = match[1];
+                document.getElementById('operador').value = match[2];
+                document.getElementById('num2').value = match[3];
+            }
         }
 
         // Lógica de Mapa e Integración de Rutas (Popayán)

@@ -89,13 +89,11 @@ else:
         }
     }
 
-# Conexión secundaria para MongoDB
+# Conexión secundaria para MongoDB (usando pymongo)
 DATABASES['mongodb'] = {
-    'ENGINE': 'djongo',
+    'ENGINE': 'django.db.backends.dummy',
     'NAME': os.getenv('MONGO_DB_NAME', 'df_p01_mongo'),
-    'CLIENT': {
-        'host': os.getenv('MONGO_URI', 'mongodb://localhost:27017/'),
-    }
+
 }
 
 
