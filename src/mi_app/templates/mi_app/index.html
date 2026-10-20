@@ -3,52 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplicación Django con Multimedia y Modelos 3D</title>
-    <!-- Componente web oficial para visores 3D -->
+    <title>Plataforma Django - Calculadora, Módulos 3D y Multimedia</title>
+    
+    <!-- Visor de Modelos 3D -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    
+    <!-- Mapa Interactivo (Leaflet CSS y JS) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f6f9; color: #333; }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        nav a { margin-right: 15px; text-decoration: none; color: #2563eb; font-weight: bold; }
-        model-viewer { width: 100%; height: 400px; background-color: #e2e8f0; border-radius: 8px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #0f172a; color: #f8fafc; }
+        .card { background: #1e293b; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); margin-bottom: 25px; border: 1px solid #334155; }
+        h2 { color: #38bdf8; border-bottom: 2px solid #334155; padding-bottom: 8px; margin-top: 0; }
+        
+        /* Calculadora */
+        .calc-display { width: 100%; height: 45px; font-size: 1.5rem; text-align: right; padding: 5px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #38bdf8; }
+        .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .calc-buttons button { padding: 15px; font-size: 1.2rem; border-radius: 6px; border: none; background: #334155; color: white; cursor: pointer; }
+        .calc-buttons button:hover { background: #475569; }
+        .calc-buttons button.op { background: #2563eb; }
+
+        /* Visor 3D y Mapa */
+        model-viewer { width: 100%; height: 400px; background-color: #0f172a; border-radius: 8px; }
+        #map { width: 100%; height: 350px; border-radius: 8px; }
+
+        /* Imágenes y Galería */
+        .img-container img { width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; }
+        
+        /* Gestión de Archivos */
+        .file-list { margin-top: 15px; list-style: none; padding: 0; }
+        .file-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #0f172a; border-radius: 6px; margin-bottom: 8px; }
+        .btn-delete { background: #ef4444; color: white; border: none; padding: 5px 12px; border-radius: 4px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <!-- Navegación de Rutas -->
-    <nav class="card">
-        <a href="/">Inicio</a>
-        <a href="/calculadora/">Calculadora</a>
-        <a href="/3d/">Modelo 3D</a>
-        <a href="/multimedia/">Multimedia</a>
-    </nav>
-
-    <!-- Visor de Modelo 3D -->
+    <!-- 1. Módulo Calculadora -->
     <div class="card">
-        <h2>Visor Interactivo 3D</h2>
+        <h2>Calculadora Interactiva</h2>
+        <input type="text" id="display" class="calc-display" readonly>
+        <div class="calc-buttons">
+            <button onclick="clearCalc()">C</button>
+            <button onclick="appendCalc('/')" class="op">/</button>
+            <button onclick="appendCalc('*')" class="op">*</button>
+            <button onclick="appendCalc('-')" class="op">-</button>
+            <button onclick="appendCalc('7')">7</button>
+            <button onclick="appendCalc('8')">8</button>
+            <button onclick="appendCalc('9')">9</button>
+            <button onclick="appendCalc('+')" class="op">+</button>
+            <button onclick="appendCalc('4')">4</button>
+            <button onclick="appendCalc('5')">5</button>
+            <button onclick="appendCalc('6')">6</button>
+            <button onclick="calculateResult()" class="op">=</button>
+            <button onclick="appendCalc('1')">1</button>
+            <button onclick="appendCalc('2')">2</button>
+            <button onclick="appendCalc('3')">3</button>
+            <button onclick="appendCalc('0')">0</button>
+        </div>
+    </div>
+
+    <!-- 2. Imagen Destacada -->
+    <div class="card">
+        <h2>Imagen Exploración Espacial</h2>
+        <div class="img-container">
+            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200" alt="Nebulosa y Galaxia">
+        </div>
+    </div>
+
+    <!-- 3. Modelo 3D Interactivo -->
+    <div class="card">
+        <h2>Modelo 3D - Astronauta</h2>
         <model-viewer 
             src="https://modelviewer.dev/shared-assets/models/Astronaut.glb" 
-            alt="Modelo 3D Interactivo" 
+            alt="Astronauta 3D" 
             auto-rotate 
             camera-controls 
             ar>
         </model-viewer>
     </div>
 
-    <!-- Sección Multimedia -->
+    <!-- 4. Video Temática Espacial -->
     <div class="card">
-        <h2>Sección Multimedia</h2>
-        <h3>Audio:</h3>
-        <audio controls style="width: 100%;">
-            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-        </audio>
-
-        <h3>Video / Animación:</h3>
-        <video width="100%" height="320" controls style="border-radius: 8px;">
-            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+        <h2>Video Espacial (NASA)</h2>
+        <video width="100%" height="360" controls style="border-radius: 8px;">
+            <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4" type="video/mp4">
+            Tu navegador no soporta el reproductor de video.
         </video>
     </div>
 
+    <!-- 5. Mapa Interactivo -->
+    <div class="card">
+        <h2>Mapa Interactivo</h2>
+        <div id="map"></div>
+    </div>
+
+    <!-- 6. Gestor de Archivos (Subir, Ver, Eliminar) -->
+    <div class="card">
+        <h2>Gestor de Archivos</h2>
+        <input type="file" id="fileInput" style="margin-bottom: 10px;">
+        <button onclick="uploadFile()" style="padding: 8px 16px; background: #22c55e; color: white; border: none; border-radius: 4px; cursor: pointer;">Subir Archivo</button>
+
+        <ul id="fileList" class="file-list">
+            <!-- Archivos dinámicos cargados por JS -->
+        </ul>
+    </div>
+
+    <script>
+        // Lógica de Calculadora
+        let display = document.getElementById('display');
+        function appendCalc(val) { display.value += val; }
+        function clearCalc() { display.value = ''; }
+        function calculateResult() {
+            try { display.value = eval(display.value); } 
+            catch { display.value = 'Error'; }
+        }
+
+        // Lógica de Mapa Interactivo (Leaflet)
+        const map = L.map('map').setView([2.4419, -76.6063], 13); // Popayán, Cauca
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        L.marker([2.4419, -76.6063]).addTo(map).bindPopup('Ubicación del Proyecto').openPopup();
+
+        // Lógica del Gestor de Archivos en Cliente
+        let uploadedFiles = [];
+        function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput.files.length === 0) return alert('Selecciona un archivo');
+            const file = fileInput.files[0];
+            uploadedFiles.push(file.name);
+            fileInput.value = '';
+            renderFiles();
+        }
+        function deleteFile(index) {
+            uploadedFiles.splice(index, 1);
+            renderFiles();
+        }
+        function renderFiles() {
+            const list = document.getElementById('fileList');
+            list.innerHTML = '';
+            uploadedFiles.forEach((fileName, index) => {
+                list.innerHTML += `
+                    <li class="file-item">
+                        <span>📄 ${fileName}</span>
+                        <button class="btn-delete" onclick="deleteFile(${index})">Eliminar</button>
+                    </li>
+                `;
+            });
+        }
+    </script>
 </body>
 </html>
  
